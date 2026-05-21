@@ -1,0 +1,51 @@
+# ==========================================
+# Ambiente Virtual e Dependências do Python
+# ==========================================
+backend/venv/
+backend/.venv/
+backend/env/
+backend/__pycache__/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ==========================================
+# Banco de Dados e Arquivos do Django
+# ==========================================
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/media/
+backend/staticfiles/
+.env
+
+# ==========================================
+# Dependências e Builds do Node / React (Vite)
+# ==========================================
+frontend/node_modules/
+frontend/dist/
+frontend/dist-ssr/
+frontend/*.local
+frontend/.eslintcache
+
+# Logs de Erros e Debugs
+*.log
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ==========================================
+# Configurações de IDEs e Sistema Operacional
+# ==========================================
+.vscode/
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
