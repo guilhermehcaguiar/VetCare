@@ -85,4 +85,4 @@ npm run dev
 ---
 _Projeto desenvolvido para fins de avaliação e consolidação de conhecimento na disciplina de Códigos de alta performance
 
-Desenvolvido por: Gabriel Fernando, Guilherme Aguiar, Lucas Cardoso
+Desenvolvido por: Gabriel Fernando, Guilherme Aguiar, Guilherme Juaréz Lucas Cardoso
