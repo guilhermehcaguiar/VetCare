@@ -58,11 +58,6 @@ iniciar_sistema.bat
    * Banco de dados embarcado contendo mais de **50 raças de cachorros pré-definidas**, além de gatos, aves e animais exóticos.
    * Input de raça inteligente com comportamento *clear-on-switch* (inicia limpo e sugere itens dinamicamente através de um dropdown com efeitos de brilho).
 
-3. **Linha do Tempo (Timeline Unificada):**
-   * Janela modal interna estilizada que puxa cronologicamente todo o trajeto médico daquele animal específico.
-   * Exibição em cascata contendo datas, horários, veterinário responsável e o prontuário assinado.
-   * Permite deletar registros históricos diretamente pela interface do modal com atualização em tempo real.
-
 ---
 
 ## 🗄️ Clonagem e Setup Manual (Caso não queira usar o `.bat`)
@@ -89,3 +84,5 @@ npm run dev
 
 ---
 _Projeto desenvolvido para fins de avaliação e consolidação de conhecimento na disciplina de Códigos de alta performance
+
+Desenvolvido por: Gabriel Fernando, Guilherme Aguiar, Lucas Cardoso
