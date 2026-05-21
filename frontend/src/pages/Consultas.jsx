@@ -130,7 +130,7 @@ export default function Consultas() {
       const atualizadas = [...consultas, { ...novaConsulta, id: Date.now() }];
       setConsultas(atualizadas);
       localStorage.setItem('vetcare_consultas', JSON.stringify(atualizadas));
-      mostrarMensagem('Registrado localmente (Modo Síncrono)!');
+      mostrarMensagem('Consulta registrada!');
     }
     setPetEscolhido(''); setHoraSelecionada(''); setMotivo('');
   };

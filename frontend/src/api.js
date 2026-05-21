@@ -1,16 +1,21 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/',
-  timeout: 5000,
+  baseURL: 'http://localhost:8000/api/'
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Token ${token}`;
+// Injeta o token em todas as requisições automaticamente
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('vetcare_access');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
 export default api;

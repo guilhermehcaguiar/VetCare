@@ -1,100 +1,103 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api'; // Mudado de axios para api
 
-export default function Login({ darkMode, setDarkMode }) {
+export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [erro, setErro] = useState(null);
-  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setErro(null);
-    setCarregando(true);
+    setErro('');
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/login/', {
-        username,
-        password,
-      });
+      // Consome usando a baseURL correta (api/token/)
+      const res = await api.post('token/', { username, password });
+      
+      const accessToken = res.data.access;
+      const refreshToken = res.data.refresh;
 
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('clinica_name', username);
-      navigate('/');
+      if (accessToken) {
+        localStorage.setItem('vetcare_access', accessToken);
+        localStorage.setItem('vetcare_refresh', refreshToken);
+        localStorage.setItem('clinica_name', username);
+
+        // Empurra para a raiz e força a atualização do estado das rotas
+        window.location.href = '/';
+      } else {
+        setErro('O servidor não retornou as chaves de acesso.');
+      }
     } catch (err) {
-      setErro('Credenciais inválidas para esta unidade.');
-    } finally {
-      setCarregando(false);
+      console.error(err);
+      if (err.response && (err.response.status === 401 || err.response.status === 400)) {
+        setErro('Credenciais inválidas. Verifique o identificador e a chave de acesso.');
+      } else {
+        setErro('Não foi possível conectar ao servidor backend.');
+      }
     }
   };
 
   return (
-    <div className="min-h-screen bg-zinc-100 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col items-center justify-center p-4 relative">
-      
-      {/* Alternador Superior Direito */}
-      <div className="absolute top-4 right-4">
-        <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="px-3 py-1.5 text-xs font-medium rounded-xl border border-zinc-300/60 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 cursor-pointer shadow-xs"
-        >
-          {darkMode ? '☀️ Modo Claro' : '🌙 Modo Escuro'}
-        </button>
-      </div>
+    <div className="min-h-screen flex items-center justify-center bg-[#09090b] text-zinc-100 p-4 font-sans relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-teal-500/10 rounded-full blur-[120px] pointer-events-none"></div>
 
-      <div className="bg-white dark:bg-zinc-900 p-8 rounded-xl border border-zinc-200 dark:border-zinc-800/80 shadow-sm max-w-sm w-full space-y-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-black tracking-tight text-zinc-900 dark:text-zinc-100">
-            VetCare <span className="text-teal-600 dark:text-teal-500 text-base">🐾</span>
+      <div className="w-full max-w-md bg-[#121214] border border-zinc-800/60 rounded-2xl p-8 shadow-2xl relative z-10">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-black text-white tracking-tight flex items-center justify-center gap-2">
+            VetCare <span className="text-teal-500 text-xl">🐾</span>
           </h1>
-          <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">Acesse o painel clínico restrito</p>
+          <p className="text-sm text-zinc-500 mt-2 font-medium">Acesse o painel clínico restrito</p>
         </div>
 
-        {/* ALERTA DE ERRO MÉDICO APERFEIÇOADO */}
         {erro && (
-          <div className="bg-red-50/70 dark:bg-red-950/20 border border-red-200 dark:border-red-900/40 text-red-700 dark:text-red-400 p-3 rounded-lg text-xs font-semibold text-center shadow-xs">
-            ⚠️ {erro}
+          <div className="mb-6 p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-xs text-center font-bold rounded-lg uppercase tracking-wide">
+            {erro}
           </div>
         )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1">Identificador / Clínica</label>
-            <input
-              type="text"
-              required
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:outline-none text-sm text-zinc-900 dark:text-zinc-100 focus:border-zinc-400 dark:focus:border-zinc-600 focus:bg-white transition-all"
-              placeholder="Nome de usuário"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+        <form onSubmit={handleLogin} className="space-y-5" autoComplete="off">
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider ml-1">Identificador / Clínica</label>
+            <input 
+              type="text" 
+              id="login-username"
+              name="login-username"
+              placeholder="Ex: clinica_centro"
+              className="w-full px-4 py-3 bg-[#09090b] border border-zinc-800 rounded-xl text-zinc-200 text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-all placeholder:text-zinc-500"
+              style={{ WebkitBoxShadow: '0 0 0 30px #09090b inset', WebkitTextFillColor: '#e4e4e7' }}
+              value={username} 
+              onChange={e => setUsername(e.target.value)} 
+              required 
             />
           </div>
 
-          <div>
-            <label className="block text-[10px] font-bold text-zinc-400 dark:text-zinc-500 uppercase tracking-wider mb-1">Chave de Acesso</label>
-            <input
-              type="password"
-              required
-              className="w-full px-3 py-2 bg-zinc-50 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 rounded-lg focus:outline-none text-sm text-zinc-900 dark:text-zinc-100 focus:border-zinc-400 dark:focus:border-zinc-600 focus:bg-white transition-all"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+          <div className="space-y-1.5">
+            <label className="block text-[10px] font-bold text-zinc-400 uppercase tracking-wider ml-1">Chave de Acesso</label>
+            <input 
+              type="password" 
+              id="login-password"
+              name="login-password"
+              placeholder="Sua senha de acesso..."
+              className="w-full px-4 py-3 bg-[#09090b] border border-zinc-800 rounded-xl text-zinc-200 text-sm focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500/50 transition-all placeholder:text-zinc-500"
+              style={{ WebkitBoxShadow: '0 0 0 30px #09090b inset', WebkitTextFillColor: '#e4e4e7' }}
+              value={password} 
+              onChange={e => setPassword(e.target.value)} 
+              required 
             />
           </div>
 
-          {/* BOTÃO COR CLÍNICA TEAL */}
-          <button
-            type="submit"
-            disabled={carregando}
-            className="w-full bg-teal-600 hover:bg-teal-700 dark:bg-teal-500 dark:hover:bg-teal-600 text-white font-bold py-2.5 px-4 rounded-lg text-xs transition-colors disabled:bg-zinc-400 cursor-pointer text-center uppercase tracking-wider shadow-xs"
+          <button 
+            type="submit" 
+            className="w-full py-3.5 mt-2 bg-[#00c2a8] hover:bg-[#00a891] text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-[0_0_15px_rgba(0,194,168,0.3)] hover:shadow-[0_0_25px_rgba(0,194,168,0.5)] active:scale-[0.98]"
           >
-            {carregando ? 'Autenticando...' : 'Entrar'}
+            Entrar
           </button>
         </form>
 
-        <div className="text-center pt-2 border-t border-zinc-100 dark:border-zinc-800/60">
-          <Link to="/cadastro" className="text-xs font-semibold text-teal-600 dark:text-teal-400 hover:text-teal-700 transition-colors">
+        <div className="mt-8 pt-6 border-t border-zinc-800/50 text-center">
+          <Link to="/cadastro" className="text-xs text-[#00c2a8] hover:text-white transition-colors font-medium">
             Cadastrar nova unidade institucional →
           </Link>
         </div>
