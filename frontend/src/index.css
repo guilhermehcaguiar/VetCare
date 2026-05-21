@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+/* Variante estrita para o Tailwind v4 reconhecer a classe dark no HTML */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Transição global e suavização de fontes */
+* {
+  transition-property: color, background-color, border-color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+body {
+  @apply bg-zinc-100 text-zinc-800 antialiased;
+}
